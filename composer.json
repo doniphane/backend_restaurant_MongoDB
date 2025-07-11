@@ -8,12 +8,17 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "constantable/odm-document-maker": "^1.0",
+        "doctrine/dbal": "^3",
+        "doctrine/doctrine-bundle": "^2.15",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/mongodb-odm-bundle": "^5.3",
+        "doctrine/orm": "^3.5",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.3.*",
         "symfony/runtime": "7.3.*",
+        "symfony/security-bundle": "7.3.*",
         "symfony/yaml": "7.3.*"
     },
     "config": {
@@ -66,5 +71,8 @@
             "require": "7.3.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.64"
     }
 }
