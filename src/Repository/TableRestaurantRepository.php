@@ -23,23 +23,22 @@ class TableRestaurantRepository extends DocumentRepository
         parent::__construct($dm, $uow, $classMetaData);
     }
 
-//    /**
-//     * @return TableRestaurant[] Returns an array of TableRestaurant objects
-//     */
-//    public function findByExampleField($value)
-//    {
-//        return $this->createQueryBuilder()
-//            ->addAnd(['exampleField' => ['$regex' => $value, '$options' => 'i']])
-//            ->sort('exampleField', 'ASC')
-//            ->limit(10)
-//            ->getQuery()
-//            ->execute()
-//        ;
-//    }
+    /**
+     * @return TableRestaurant[] Returns an array of TableRestaurant objects
+     */
+    public function findByCapacite($capacite)
+    {
+        return $this->createQueryBuilder()
+            ->field('capacite')->gte($capacite)
+            ->sort('capacite', 'ASC')
+            ->getQuery()
+            ->execute()
+        ;
+    }
 
-//    public function count(): int
-//    {
-//        $qb = $this->createQueryBuilder();
-//        return $qb->count()->getQuery()->execute();
-//    }
+    //    public function count(): int
+    //    {
+    //        $qb = $this->createQueryBuilder();
+    //        return $qb->count()->getQuery()->execute();
+    //    }
 }

@@ -28,6 +28,9 @@ class Reservation
     #[ODM\ReferenceOne(targetDocument: TableRestaurant::class)]
     private ?TableRestaurant $tableRestaurant = null;
 
+    #[ODM\Field(type: "date_immutable")]
+    private ?\DateTimeImmutable $dateReservation = null;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -89,6 +92,18 @@ class Reservation
     public function setTableRestaurant(?TableRestaurant $tableRestaurant): static
     {
         $this->tableRestaurant = $tableRestaurant;
+
+        return $this;
+    }
+
+    public function getDateReservation(): ?\DateTimeImmutable
+    {
+        return $this->dateReservation;
+    }
+
+    public function setDateReservation(\DateTimeImmutable $dateReservation): static
+    {
+        $this->dateReservation = $dateReservation;
 
         return $this;
     }
