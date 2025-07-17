@@ -5,9 +5,12 @@ namespace App\Document;
 use App\Repository\TableRestaurantRepository;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\ODM\MongoDB\Types\Type;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ODM\Document(repositoryClass: TableRestaurantRepository::class)]
+#[ApiResource]
 class TableRestaurant
+
 {
     #[ODM\Id]
     private ?string $id = null;

@@ -4,8 +4,10 @@ namespace App\Document;
 
 use App\Repository\ReservationRepository;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ODM\Document(repositoryClass: ReservationRepository::class)]
+#[ApiResource]
 class Reservation
 {
     #[ODM\Id]

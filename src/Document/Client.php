@@ -2,12 +2,16 @@
 
 namespace App\Document;
 
+use ApiPlatform\Doctrine\Odm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ODM\Document(repositoryClass: ClientRepository::class)]
+#[ApiResource]
 class Client
 {
     #[ODM\Id]
@@ -20,6 +24,7 @@ class Client
     private ?string $telephone = null;
 
     #[ODM\Field]
+    #[ApiFilter(SearchFilter::class, strategy: "exact")]
     private ?string $email = null;
 
     #[ODM\ReferenceMany(targetDocument: Reservation::class, orphanRemoval: true, mappedBy: 'client')]
