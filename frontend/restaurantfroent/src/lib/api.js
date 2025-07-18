@@ -1,15 +1,15 @@
-const apiURL = "/api"; // Utilise le proxy Vite
+const apiURL = import.meta.env.VITE_API_PROXY_PATH || "/api";
 
-// Headers spécifiques pour API Platform
+
 const getApiHeaders = () => {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Accept", "application/ld+json");
 
-    // Ajouter le token d'authentification s'il est disponible
+
     const token = localStorage.getItem('api_token');
     if (token) {
-        // Ajouter Bearer si ce n'est pas déjà inclus
+
         if (token.startsWith('Bearer ')) {
             headers.append("Authorization", token);
         } else {
@@ -20,7 +20,7 @@ const getApiHeaders = () => {
     return headers;
 };
 
-// Fonction utilitaire pour gérer les réponses
+
 async function handleResponse(response, endpoint) {
     if (!response.ok) {
         const errorText = await response.text();
@@ -42,7 +42,7 @@ async function handleResponse(response, endpoint) {
 }
 
 export async function fetchTables(capacite, dateReservation) {
-    // Format standard pour API Platform
+
     const requestData = {
         date: dateReservation,
         capacite: parseInt(capacite)
@@ -83,7 +83,7 @@ export async function fetchClient(email) {
         const response = await fetch(apiURL + "/clients?email=" + encodeURIComponent(email), requestOptions);
         const data = await handleResponse(response, 'fetchClient');
 
-        // Gestion API Platform
+
         if (data['hydra:member'] && data['hydra:member'].length > 0) {
             return data['hydra:member'][0]['@id'];
         } else if (data.member && data.member.length > 0) {
