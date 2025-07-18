@@ -1,7 +1,6 @@
 import { useState } from "react";
 import FormReservation from "./FormReservation";
 import FormTable from "./FormTable";
-import AuthConfig from "./AuthConfig";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -15,11 +14,6 @@ function App() {
     capacite: "",
     dateReservation: "",
   });
-  const [apiToken, setApiToken] = useState(localStorage.getItem('api_token') || '');
-
-  const handleTokenSet = (token) => {
-    setApiToken(token);
-  };
 
   const handleBackToForm = () => {
     setShowTable(false);
@@ -31,9 +25,6 @@ function App() {
       <div>
         <Toaster />
       </div>
-
-      {/* Composant d'authentification */}
-      <AuthConfig onTokenSet={handleTokenSet} />
 
       {loading && (
         <div className="flex flex-col space-y-4 justify-center items-center">

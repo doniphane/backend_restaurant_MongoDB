@@ -37,14 +37,12 @@ function FormTable({ tables, setFormData, formData, onBack }) {
                 onBack && onBack();
             }, 1500);
         } catch (error) {
-            console.error("Erreur lors de la réservation:", error);
             toast.error("Erreur lors de la réservation");
         }
     }
 
     // Vérifier que tables est un tableau
     if (!tables || !Array.isArray(tables)) {
-        console.warn('Tables is not an array:', tables);
         return (
             <div className="flex flex-col space-y-4 justify-center items-center w-2xl">
                 <div className="flex items-center justify-between w-full">

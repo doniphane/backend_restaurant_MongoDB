@@ -27,20 +27,15 @@ function FormReservation({
 
         setLoading(true);
         try {
-            console.log('Recherche de tables avec:', formData);
-
             const data = await fetchTables(
                 formData.capacite,
                 formData.dateReservation
             );
 
-            console.log('Tables reçues:', data);
             setTables(data);
             setShowTable(true);
             toast.success("Tables trouvées !");
         } catch (error) {
-            console.error('Erreur complète:', error);
-
             if (error.message.includes('500')) {
                 toast.error("Erreur serveur (500). Vérifiez que le backend est démarré et accessible.");
             } else if (error.message.includes('fetch')) {
