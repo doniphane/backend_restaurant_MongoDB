@@ -40,7 +40,7 @@ export const fetchAvailableTables = async (capacite, dateReservation, setLoading
         console.error('Erreur lors de la récupération des tables:', error);
         throw error;
     } finally {
-        // Désactiver le loading si la fonction setLoading est fournie
+
         if (setLoading && typeof setLoading === 'function') {
             setLoading(false);
         }
@@ -74,7 +74,7 @@ export const createReservation = async (reservationData, setLoading = null) => {
     }
 };
 
-// Fonction pour récupérer toutes les tables (à implémenter plus tard)
+
 export const fetchAllTables = async (setLoading = null) => {
     try {
         const response = await fetch(
