@@ -4,47 +4,34 @@ import {
     AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import { MdOutlinePhoneInTalk } from "react-icons/md";
+import { fetchAvailableTables } from "./lib/api.js";
+import { toast } from 'react-toastify';
 
 function FormReservation({ setShowTable, setLoading, setTables }) {
-    async function fetchTables(capacite, dateReservation) {
+    async function handleFetchTables(capacite, dateReservation) {
         try {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            const raw = JSON.stringify({
-                date: dateReservation || "2025-07-17",
-                capacite: capacite || 3,
-            });
-
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-            };
-
-            const response = await fetch(
-                "https://127.0.0.1:8000/api/booking/tables",
-                requestOptions
-            );
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Tables disponibles:', data);
-            setTables(data.tables_dispo || []);
+            const tables = await fetchAvailableTables(capacite, dateReservation, setLoading);
+            setTables(tables);
             setShowTable(true);
+
+
+            toast.success('Tables bien récupérées !', {
+                autoClose: 5000,
+            });
         } catch (error) {
             console.error('Erreur lors de la récupération des tables:', error);
-            alert('Erreur lors de la récupération des tables: ' + error.message);
-        } finally {
+
+
+            toast.error('Erreur : impossible de récupérer les données des tables', {
+                autoClose: false,
+            });
+
             setLoading(false);
         }
     }
 
     async function handleClick() {
-        await fetchTables(3, "2025-07-17");
+        await handleFetchTables(3, "2025-07-17");
     }
 
     return (

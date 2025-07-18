@@ -1,6 +1,8 @@
 import { useState } from "react";
 import FormReservation from "./FormReservation";
 import FormTable from "./FormTable";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -17,7 +19,7 @@ function App() {
       )}
       {!loading &&
         (showTable ? (
-          <FormTable />
+          <FormTable tables={tables} />
         ) : (
           <FormReservation
             setShowTable={setShowTable}
@@ -25,6 +27,19 @@ function App() {
             setTables={setTables}
           />
         ))}
+
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }
