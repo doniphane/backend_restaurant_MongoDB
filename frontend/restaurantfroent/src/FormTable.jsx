@@ -32,7 +32,7 @@ function FormTable({ capacite = 4, dateReservation = "2025-07-17" }) {
     if (loading) {
         return (
             <div className="flex justify-center items-center p-8">
-                <span>Chargement des tables...</span>
+                <span>Chargement des tabless...</span>
             </div>
         );
     }
