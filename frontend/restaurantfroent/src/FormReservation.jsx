@@ -4,34 +4,53 @@ import {
     AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import { MdOutlinePhoneInTalk } from "react-icons/md";
-import { fetchAvailableTables } from "./lib/api.js";
-import { toast } from 'react-toastify';
+import { fetchTables } from "./lib/api";
+import toast from "react-hot-toast";
 
-function FormReservation({ setShowTable, setLoading, setTables }) {
-    async function handleFetchTables(capacite, dateReservation) {
+function FormReservation({
+    setShowTable,
+    setLoading,
+    setTables,
+    setFormData,
+    formData,
+}) {
+    async function handleClick() {
+        if (!formData.capacite || !formData.dateReservation) {
+            toast.error("Veuillez remplir tous les champs !");
+            return;
+        }
+
+        if (!formData.nom || !formData.email || !formData.telephone) {
+            toast.error("Veuillez remplir vos informations personnelles !");
+            return;
+        }
+
+        setLoading(true);
         try {
-            const tables = await fetchAvailableTables(capacite, dateReservation, setLoading);
-            setTables(tables);
+            console.log('Recherche de tables avec:', formData);
+
+            const data = await fetchTables(
+                formData.capacite,
+                formData.dateReservation
+            );
+
+            console.log('Tables reçues:', data);
+            setTables(data);
             setShowTable(true);
-
-
-            toast.success('Tables bien récupérées !', {
-                autoClose: 5000,
-            });
+            toast.success("Tables trouvées !");
         } catch (error) {
-            console.error('Erreur lors de la récupération des tables:', error);
+            console.error('Erreur complète:', error);
 
-
-            toast.error('Erreur : impossible de récupérer les données des tables', {
-                autoClose: false,
-            });
-
+            if (error.message.includes('500')) {
+                toast.error("Erreur serveur (500). Vérifiez que le backend est démarré et accessible.");
+            } else if (error.message.includes('fetch')) {
+                toast.error("Impossible de contacter le serveur. Vérifiez votre connexion.");
+            } else {
+                toast.error(`Erreur: ${error.message}`);
+            }
+        } finally {
             setLoading(false);
         }
-    }
-
-    async function handleClick() {
-        await handleFetchTables(3, "2025-07-17");
     }
 
     return (
@@ -39,22 +58,70 @@ function FormReservation({ setShowTable, setLoading, setTables }) {
             <h1>Reserver une table</h1>
             <label className="input">
                 <AiOutlineUser />
-                <input type="text" className="grow" placeholder="Nom" />
+                <input
+                    type="text"
+                    className="grow"
+                    placeholder="Nom"
+                    value={formData.nom}
+                    onInput={(e) => {
+                        setFormData({ ...formData, nom: e.target.value });
+                    }}
+                    required
+                />
             </label>
             <label className="input">
                 <AiOutlineMail />
-                <input type="email" className="grow" placeholder="Email" />
+                <input
+                    type="email"
+                    className="grow"
+                    placeholder="Email"
+                    value={formData.email}
+                    onInput={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                    }}
+                    required
+                />
             </label>
             <label className="input">
                 <MdOutlinePhoneInTalk />
-                <input type="text" className="grow" placeholder="Téléphone" />
+                <input
+                    type="text"
+                    className="grow"
+                    placeholder="Téléphone"
+                    value={formData.telephone}
+                    onInput={(e) => {
+                        setFormData({ ...formData, telephone: e.target.value });
+                    }}
+                    required
+                />
             </label>
             <label className="input">
                 <AiOutlineUsergroupAdd />
-                <input type="text" className="grow" placeholder="Capacité" />
+                <input
+                    type="number"
+                    className="grow"
+                    placeholder="Capacité"
+                    min="1"
+                    max="12"
+                    value={formData.capacite}
+                    onInput={(e) => {
+                        setFormData({ ...formData, capacite: e.target.value });
+                    }}
+                    required
+                />
             </label>
             <label className="input">
-                <input type="date" className="grow" placeholder="Date" />
+                <input
+                    type="date"
+                    className="grow"
+                    placeholder="Date"
+                    min={new Date().toISOString().split('T')[0]}
+                    value={formData.dateReservation}
+                    onInput={(e) => {
+                        setFormData({ ...formData, dateReservation: e.target.value });
+                    }}
+                    required
+                />
             </label>
             <button className="btn btn-primary" onClick={handleClick}>
                 Rechercher une table

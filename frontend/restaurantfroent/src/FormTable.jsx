@@ -1,91 +1,143 @@
-import React, { useState, useEffect } from "react";
-import { AiOutlineTable, AiOutlineTeam } from "react-icons/ai";
-import { fetchAvailableTables } from "./lib/api.js";
+import { useState } from "react";
+import { TbUsersGroup } from "react-icons/tb";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { createClient, createReservation, fetchClient } from "./lib/api";
+import toast from "react-hot-toast";
 
-function FormTable({ capacite = 4, dateReservation = "2025-07-17" }) {
+function FormTable({ tables, setFormData, formData, onBack }) {
     const [selectedTable, setSelectedTable] = useState("");
-    const [tables, setTables] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const getTables = async () => {
-            try {
-                setLoading(true);
+    async function handleClick() {
+        if (!selectedTable) {
+            toast.error("Veuillez sélectionner une table !");
+            return;
+        }
 
-                const availableTables = await fetchAvailableTables(capacite, dateReservation, setLoading);
-
-                setTables(availableTables);
-            } catch (error) {
-                console.error('Erreur:', error);
-                setLoading(false);
+        try {
+            // Vérifier si l'utilisateur existe
+            let idUser = await fetchClient(formData.email);
+            if (!idUser) {
+                // S'il n'existe pas, alors on créé l'utilisateur
+                idUser = await createClient(
+                    formData.nom,
+                    formData.email,
+                    formData.telephone
+                );
+                toast.success("Client créé avec succès !");
+            } else {
+                toast.success("Client existant trouvé !");
             }
-        };
 
-        getTables();
-    }, [capacite, dateReservation]);
+            // On créé la réservation
+            await createReservation(formData, idUser, selectedTable);
+            toast.success("Réservation créée avec succès !");
 
-    const selectTable = (tableId) => {
-        setSelectedTable(tableId);
-    };
+            // Retourner au formulaire après succès
+            setTimeout(() => {
+                onBack && onBack();
+            }, 1500);
+        } catch (error) {
+            console.error("Erreur lors de la réservation:", error);
+            toast.error("Erreur lors de la réservation");
+        }
+    }
 
-
-    if (loading) {
+    // Vérifier que tables est un tableau
+    if (!tables || !Array.isArray(tables)) {
+        console.warn('Tables is not an array:', tables);
         return (
-            <div className="flex justify-center items-center p-8">
-                <span>Chargement des tabless...</span>
+            <div className="flex flex-col space-y-4 justify-center items-center w-2xl">
+                <div className="flex items-center justify-between w-full">
+                    {onBack && (
+                        <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={onBack}
+                        >
+                            <AiOutlineArrowLeft />
+                            Retour
+                        </button>
+                    )}
+                    <h1 className="text-center flex-1">Choisir une table</h1>
+                </div>
+                <div className="alert alert-warning">
+                    <span>Aucune table disponible ou erreur de chargement</span>
+                </div>
             </div>
         );
     }
-
 
     if (tables.length === 0) {
         return (
-            <div className="alert alert-warning">
-                <span>Aucune table disponible</span>
+            <div className="flex flex-col space-y-4 justify-center items-center w-2xl">
+                <div className="flex items-center justify-between w-full">
+                    {onBack && (
+                        <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={onBack}
+                        >
+                            <AiOutlineArrowLeft />
+                            Retour
+                        </button>
+                    )}
+                    <h1 className="text-center flex-1">Choisir une table</h1>
+                </div>
+                <div className="alert alert-warning">
+                    <span>Aucune table disponible pour cette date et capacité</span>
+                </div>
             </div>
         );
     }
 
-
     return (
-        <div className="flex flex-col gap-4 justify-center items-center">
-            <h2>Tables disponibles</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {tables.map((table, index) => (
-                    <div
-                        key={table.id || index}
-                        className={`card bg-base-100 shadow-xl cursor-pointer ${selectedTable === table.id ? "ring-2 ring-primary" : ""
-                            }`}
-                        onClick={() => selectTable(table.id)}
+        <div className="flex flex-col space-y-4 justify-center items-center w-2xl">
+            <div className="flex items-center justify-between w-full">
+                {onBack && (
+                    <button
+                        className="btn btn-ghost btn-sm"
+                        onClick={onBack}
                     >
-                        <div className="card-body">
-                            <div className="flex items-center gap-3">
-                                <AiOutlineTable className="text-2xl text-primary" />
-                                <div>
-                                    <h3>Table N° {table.numero}</h3>
-                                    <div className="flex items-center gap-2">
-                                        <AiOutlineTeam />
-                                        <span>{table.capacite} personnes</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <input
-                                type="radio"
-                                name="table"
-                                checked={selectedTable === table.id}
-                                onChange={() => selectTable(table.id)}
-                            />
-                        </div>
-                    </div>
-                ))}
+                        <AiOutlineArrowLeft />
+                        Retour
+                    </button>
+                )}
+                <h1 className="text-center flex-1">Choisir une table</h1>
             </div>
 
-            {selectedTable && (
-                <button className="btn btn-primary mt-4">
-                    Réserver cette table
-                </button>
-            )}
+            <fieldset className="space-y-3">
+                <legend className="sr-only">Tables</legend>
+
+                {tables.map((table) => (
+                    <div key={table.id}>
+                        <label
+                            htmlFor={`table-${table.id}`}
+                            className="w-xl flex items-center justify-between gap-4 rounded border border-gray-300 bg-white p-3 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600"
+                        >
+                            <p className="text-gray-700">Table n°{table.numero}</p>
+
+                            <p className="flex items-center gap-x-2 text-gray-900">
+                                <TbUsersGroup /> {table.capacite}
+                            </p>
+
+                            <input
+                                type="radio"
+                                name="tables"
+                                id={`table-${table.id}`}
+                                className="sr-only"
+                                onChange={(e) =>
+                                    setSelectedTable("/api/table_restaurants/" + table.id)
+                                }
+                            />
+                        </label>
+                    </div>
+                ))}
+            </fieldset>
+            <button
+                className="btn btn-primary"
+                onClick={handleClick}
+                disabled={!selectedTable}
+            >
+                Réserver cette table
+            </button>
         </div>
     );
 }
