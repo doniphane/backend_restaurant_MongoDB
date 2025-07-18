@@ -39,7 +39,7 @@ final class BookingController extends AbstractController
                 $tables_dispo[] = $t;
             }
         }
-        dd($tables_dispo);
+
         return $this->json(
             [
                 'capacite' => $capacite,
